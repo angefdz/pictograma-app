@@ -15,14 +15,11 @@ public class ConfiguracionService {
     private ConfiguracionRepository configuracionRepository;
 
     public Optional<ConfiguracionSimple> getConfiguracionSimpleByUsuarioId(Long usuarioId) {
-        System.out.println(">>> DEBUG ConfiguracionService: Buscando configuración en repositorio para usuario ID: " + usuarioId);
         Optional<Configuracion> configuracionOptional = Optional.ofNullable(configuracionRepository.buscarPorUsuario(usuarioId));
 
         if (configuracionOptional.isPresent()) {
-            System.out.println(">>> DEBUG ConfiguracionService: Repositorio encontró configuración.");
             return configuracionOptional.map(this::convertToSimpleDto);
         } else {
-            System.out.println(">>> DEBUG ConfiguracionService: Repositorio NO encontró configuración.");
             return Optional.empty();
         }
     }
@@ -33,11 +30,10 @@ public class ConfiguracionService {
         dto.setBotonesPorPantalla(configuracion.getBotonesPorPantalla());
         dto.setMostrarPorCategoria(configuracion.getMostrarPorCategoria());
         
-        // Conversión del ENUM a String para el DTO
         if (configuracion.getTipoVoz() != null) {
-            dto.setTipoVoz(configuracion.getTipoVoz().name()); // Usamos .name() para obtener el nombre del enum como String
+            dto.setTipoVoz(configuracion.getTipoVoz().name()); 
         } else {
-            dto.setTipoVoz(null); // O un valor por defecto si lo prefieres
+            dto.setTipoVoz(null); 
         }
 
         if (configuracion.getUsuario() != null) {
