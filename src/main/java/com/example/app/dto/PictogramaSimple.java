@@ -19,10 +19,10 @@ public class PictogramaSimple {
     public Long getId() { return id; }
     public String getNombre() { return nombre; }
     public String getImagen() { return imagen; }
-    public String getTipo() { return tipo; } // 👈 Getter nuevo
+    public String getTipo() { return tipo; } 
 
     public void setId(Long id) { this.id = id; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public void setImagen(String imagen) { this.imagen = imagen; }
-    public void setTipo(String tipo) { this.tipo = tipo; } // 👈 Setter nuevo
+    public void setTipo(String tipo) { this.tipo = tipo; }
 }

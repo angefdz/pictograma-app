@@ -40,24 +40,19 @@ public class CategoriaController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof Usuario usuario) {
-        	System.out.println("El correo de los cojones es: "+ usuario.getEmail());
             return usuario.getEmail();
         }
         
-        System.out.println("No se que cojones tiene que mandar aquí: "+ principal.toString());
         return principal.toString();
     }
     
     @PostMapping("/general")
     public ResponseEntity<CategoriaConPictogramas> crearCategoriaGeneral(@RequestBody CategoriaConPictogramasInput input) {
-        System.out.println("Entra");
 
         if (input == null || input.getNombre() == null || input.getNombre().isBlank()) {
-        	System.out.println("Tus muertos");
             return ResponseEntity.badRequest().build();
         }
-        System.out.println("intentándolo");
-        CategoriaConPictogramas nueva = categoriaService.crearDesdeInput(input); // ya pone usuario = null
+        CategoriaConPictogramas nueva = categoriaService.crearDesdeInput(input); 
         return new ResponseEntity<>(nueva, HttpStatus.CREATED);
     }
 
@@ -80,22 +75,6 @@ public class CategoriaController {
         return new ResponseEntity<>(categorias, HttpStatus.OK);
     }
 
-    @GetMapping("/usuarios/{usuario_id}")
-    public ResponseEntity<List<CategoriaConPictogramas>> getCategoriasPersonalizados(@PathVariable Long usuario_id) {
-        String correo = getCorreoAutenticado();
-        Long idAutenticado = usuarioService.obtenerIdPorCorreo(correo);
-
-        if (!idAutenticado.equals(usuario_id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403
-        }
-
-        List<CategoriaConPictogramas> categorias = categoriaService.obtenerCategoriasPersonalizadasConPictogramas(usuario_id);
-        if (categorias.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(categorias, HttpStatus.OK);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<CategoriaConPictogramas> getCategoriaById(@PathVariable Long id) {
         Optional<CategoriaConPictogramas> categoria = categoriaService.obtenerCategoriaConPictogramasOpt(id, null);
@@ -112,7 +91,7 @@ public class CategoriaController {
             return ResponseEntity.badRequest().build();
         }
         String correo = getCorreoAutenticado();
-        Long idAutenticado = usuarioService.obtenerIdPorCorreo(correo);
+        Long idAutenticado = usuarioService.obtenerId(correo);
 
         Optional<Categoria> categoriaOpt = categoriaService.obtenerCategoriaPorId(id);
         if (categoriaOpt.isEmpty()) return ResponseEntity.notFound().build();
@@ -120,30 +99,23 @@ public class CategoriaController {
         Categoria categoria = categoriaOpt.get();
 
         if (categoria.getUsuario() == null) {
-            // ✅ Categoría general → solo actualizar relaciones
             categoriaService.actualizarPictogramasRelacionados(id, input.getPictogramas(), idAutenticado);
             CategoriaConPictogramas resultado = categoriaService.obtenerCategoriaConPictogramas(id, idAutenticado);
             return ResponseEntity.ok(resultado);
         }
 
         if (categoria.getUsuario().getId().equals(idAutenticado)) {
-            // ✅ Categoría personalizada → actualizar todo
             Optional<CategoriaConPictogramas> actualizada = categoriaService.actualizarCategoria(id, input);
             return actualizada.map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.notFound().build());
         }
 
-        // ❌ Categoría de otro usuario → denegar acceso
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
-    
-
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategoria(@PathVariable Long id) {
         String correo = getCorreoAutenticado();
-        Long idAutenticado = usuarioService.obtenerIdPorCorreo(correo);
+        Long idAutenticado = usuarioService.obtenerId(correo);
 
         try {
             categoriaService.eliminarCategoria(id, idAutenticado);
@@ -154,14 +126,10 @@ public class CategoriaController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
-
-
-
-
     @PostMapping("/usuario")
     public ResponseEntity<CategoriaConPictogramas> crearCategoriaUsuario(@RequestBody CategoriaUsuarioInput input) {
         String correo = getCorreoAutenticado();
-        Long idAutenticado = usuarioService.obtenerIdPorCorreo(correo);
+        Long idAutenticado = usuarioService.obtenerId(correo);
 
         if (!idAutenticado.equals(input.getUsuarioId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
@@ -170,38 +138,17 @@ public class CategoriaController {
         CategoriaConPictogramas nueva = categoriaService.crearCategoriaDeUsuario(input);
         return new ResponseEntity<>(nueva, HttpStatus.CREATED);
     }
-
     @PostMapping("/por-ids")
     public ResponseEntity<List<CategoriaSimple>> obtenerCategoriasPorIds(@RequestBody List<Long> ids) {
         List<CategoriaSimple> categorias = categoriaService.obtenerCategoriasPorIds(ids);
         return ResponseEntity.ok(categorias);
     }
-
-    @GetMapping("/visibles")
-    public ResponseEntity<List<CategoriaSimple>> getCategoriasVisibles() {
-        System.out.println("ENTRO EN EL ENDPOINT CORRECTO");
-        try {
-            String correo = getCorreoAutenticado();
-            Long idAutenticado = usuarioService.obtenerIdPorCorreo(correo);
-            System.out.println("El usuario id es: " + idAutenticado);
-
-            List<CategoriaSimple> categorias = categoriaService.obtenerCategoriasVisiblesParaUsuario(idAutenticado);
-            if (categorias.isEmpty()) {
-                return ResponseEntity.noContent().build();
-            }
-
-            return ResponseEntity.ok(categorias);
-        } catch (RuntimeException e) {
-            System.out.println("Error al obtener ID del usuario: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-    }
-    
+  
     @GetMapping("/pictograma/{pictogramaId}")
     public ResponseEntity<List<CategoriaSimple>> getCategoriasDePictograma(@PathVariable Long pictogramaId) {
         try {
             String correo = getCorreoAutenticado();
-            Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
+            Long usuarioId = usuarioService.obtenerId(correo);
             List<CategoriaSimple> categorias = categoriaService.obtenerCategoriasDePictogramaParaUsuario(pictogramaId, usuarioId);
 
             if (categorias.isEmpty()) {
@@ -213,23 +160,16 @@ public class CategoriaController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-    
     @GetMapping("/con-pictogramas")
     public ResponseEntity<List<CategoriaConPictogramas>> obtenerCategoriasConPictogramas() {
-    	System.out.println(">>> Entrando en obtenerCategoriasConPictogramas");
         try {
-            System.out.println("ESTOY ENSEÑANDO LAS CATEGORÍAS");
             String correo = getCorreoAutenticado();
-            Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
-            System.out.println("Mi usuario es:" +  usuarioId);
+            Long usuarioId = usuarioService.obtenerId(correo);
             List<CategoriaConPictogramas> resultado = categoriaService.obtenerCategoriasConPictogramasVisibles(usuarioId);
 
             if (resultado.isEmpty()) {
-                System.out.println("VACÍO");
                 return ResponseEntity.noContent().build();
             }
-
-
             return ResponseEntity.ok(resultado);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

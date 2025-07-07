@@ -1,7 +1,6 @@
 package com.example.app.controller;
 
 import java.util.List;
-import java.util.Optional; // Importa Optional para el delete y put
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.app.dto.UsuarioSimple;
 import com.example.app.model.Usuario;
-// Ya no necesitamos UsuarioRepository aquí
-// import com.example.app.repository.UsuarioRepository;
 import com.example.app.service.UsuarioService; // Importa tu servicio
 
 @RestController
@@ -35,7 +31,6 @@ public class UsuarioController {
 
 	        return principal.toString();
 	    }
-    // Inyección de dependencias para el UsuarioService
     @Autowired
     private UsuarioService usuarioService;
 
@@ -44,7 +39,7 @@ public class UsuarioController {
     public ResponseEntity<?> actualizarUsuario(@RequestBody UsuarioSimple datos) {
         String correo = getCorreoAutenticado();
 
-        return usuarioService.editarUsuarioPorCorreo(correo, datos)
+        return usuarioService.editarUsuario(correo, datos)
                 .map(usuario -> ResponseEntity.ok("Usuario actualizado"))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -52,7 +47,7 @@ public class UsuarioController {
 
     @GetMapping()
     public ResponseEntity<List<Usuario>> getUsuarios() {
-        List<Usuario> usuarios = usuarioService.obtenerTodos(); // Usa el servicio
+        List<Usuario> usuarios = usuarioService.obtenerTodos();
         if (usuarios.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -64,7 +59,7 @@ public class UsuarioController {
         try {
         	
             String correo = getCorreoAutenticado(); 
-            Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
+            Long usuarioId = usuarioService.obtenerId(correo);
 
             return usuarioService.obtenerPorId(usuarioId)
                 .map(usuario -> {
@@ -85,7 +80,7 @@ public class UsuarioController {
     @DeleteMapping("/me")
     public ResponseEntity<Object> eliminarMiCuenta() {
         String correo = getCorreoAutenticado();
-        boolean eliminado = usuarioService.eliminarUsuarioPorCorreo(correo);
+        boolean eliminado = usuarioService.eliminarUsuario(correo);
 
         if (eliminado) {
             return ResponseEntity.noContent().build();

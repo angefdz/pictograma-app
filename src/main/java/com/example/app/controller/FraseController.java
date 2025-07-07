@@ -62,7 +62,6 @@ public class FraseController {
 	        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	    }
 
-	    // Construir el contenido CSV (sin id_frase)
 	    StringBuilder csvBuilder = new StringBuilder();
 	    csvBuilder.append("texto,fecha\n");
 

@@ -5,7 +5,7 @@ public class ConfiguracionSimple {
     private Integer id;
     private Integer botonesPorPantalla;
     private Boolean mostrarPorCategoria;
-    private String tipoVoz; // Cambiado a String para el DTO
+    private String tipoVoz; 
     private Long usuarioId;
 
     public ConfiguracionSimple() {}

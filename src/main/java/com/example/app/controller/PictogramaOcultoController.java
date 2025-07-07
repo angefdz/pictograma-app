@@ -42,7 +42,7 @@ public class PictogramaOcultoController {
     @PostMapping("/ocultar")
     public ResponseEntity<String> ocultarPictograma(@RequestParam Long pictogramaId) {
         String correo = getCorreoAutenticado();
-        Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
+        Long usuarioId = usuarioService.obtenerId(correo);
 
         boolean resultado = pictogramaOcultoService.ocultarPorIds(pictogramaId, usuarioId);
         if (!resultado) {
@@ -54,7 +54,7 @@ public class PictogramaOcultoController {
     @DeleteMapping("/desocultar")
     public ResponseEntity<String> desocultarPictograma(@RequestParam Long pictogramaId) {
         String correo = getCorreoAutenticado();
-        Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
+        Long usuarioId = usuarioService.obtenerId(correo);
 
         boolean resultado = pictogramaOcultoService.desocultarPorIds(pictogramaId, usuarioId);
         if (!resultado) {
@@ -74,17 +74,11 @@ public class PictogramaOcultoController {
     public ResponseEntity<List<PictogramaConCategorias>> getPictogramasOcultos() {
         try {
             String correo = getCorreoAutenticado();  // Método que obtienes del token
-            Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
-            System.out.println("El id del usuario es: "+ usuarioId);
+            Long usuarioId = usuarioService.obtenerId(correo);
             List<PictogramaConCategorias> ocultos = pictogramaOcultoService.obtenerPictogramasOcultos(usuarioId);
-            if (ocultos.isEmpty()) {
-            	System.out.println("Esta puta mierda no va");
-            }else {
-            	System.out.println("Si que va");
-            }
+            
             return ResponseEntity.ok(ocultos);
         } catch (RuntimeException e) {
-            System.out.println("Error al obtener ID del usuario: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

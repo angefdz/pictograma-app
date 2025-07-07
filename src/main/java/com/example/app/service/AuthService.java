@@ -8,16 +8,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // <--- IMPORTE IMPORTANTE
 
-import com.example.app.model.Categoria;
 import com.example.app.model.Configuracion;     // <--- IMPORTE IMPORTANTE
-import com.example.app.model.Pictograma;
 import com.example.app.model.PictogramaCategoria;
 import com.example.app.model.TipoVoz;          // <--- IMPORTE IMPORTANTE
 import com.example.app.model.Usuario;
-import com.example.app.repository.CategoriaRepository;
 import com.example.app.repository.ConfiguracionRepository; // <--- IMPORTE IMPORTANTE
 import com.example.app.repository.PictogramaCategoriaRepository;
-import com.example.app.repository.PictogramaRepository;
 import com.example.app.repository.UsuarioRepository;
 
 @Service
@@ -35,11 +31,23 @@ public class AuthService {
     @Autowired
     private ConfiguracionRepository configuracionRepository; 
     
+    private boolean esContrasenaSegura(String contrasena) {
+        if (contrasena == null) return false;
+
+       //return contrasena.length() >= 8 &&
+         //      contrasena.matches(".*[a-z].*") &&     // minúscula
+           //    contrasena.matches(".*[A-Z].*") &&     // mayúscula
+             //contrasena.matches(".*\\d.*") &&       // número
+               //contrasena.matches(".*[^a-zA-Z0-9].*"); // símbolo
+        return true;
+    }
     @Transactional 
     public boolean registrarUsuario(Usuario usuario) {
         if (usuarioRepository.buscarPorEmail(usuario.getEmail()).isPresent()) {
-            System.out.println("Ya existe");
             return false; 
+        }
+        if (!esContrasenaSegura(usuario.getContrasena())) {
+            throw new IllegalArgumentException("La contraseña no es segura. Debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula, un número y un carácter especial.");
         }
 
         String contrasenaEncriptada = passwordEncoder.encode(usuario.getContrasena());
@@ -70,23 +78,19 @@ public class AuthService {
         if (!"manual".equalsIgnoreCase(usuario.getMetodoAutenticacion())) {
             return false; 
         }
-        System.out.println(passwordEncoder.matches(contrasenaPlano, usuario.getContrasena()));
         return passwordEncoder.matches(contrasenaPlano, usuario.getContrasena());
     }
 
     @Transactional 
     public Usuario registrarUsuarioGoogle(Usuario usuario) {
-        // Validación opcional (puedes quitarla si ya haces el control antes)
         if (usuarioRepository.buscarPorEmail(usuario.getEmail()).isPresent()) {
             throw new IllegalStateException("El usuario con ese correo ya existe");
         }
 
         usuario.setMetodoAutenticacion("google");
 
-        // Guardar el nuevo usuario
         Usuario nuevoUsuario = usuarioRepository.save(usuario);
 
-        // Crear configuración por defecto
         Configuracion configuracionDefault = new Configuracion();
         configuracionDefault.setUsuario(nuevoUsuario);
         configuracionDefault.setBotonesPorPantalla(9);
@@ -95,7 +99,6 @@ public class AuthService {
 
         configuracionRepository.save(configuracionDefault);
 
-        // Asociar la configuración al usuario
         nuevoUsuario.setConfiguracion(configuracionDefault);
 
         return nuevoUsuario;
@@ -126,7 +129,7 @@ public class AuthService {
         Usuario usuario = optional.get();
 
         if (!passwordEncoder.matches(contrasenaActual, usuario.getContrasena())) {
-            return false; // la contraseña actual no coincide
+            return false; 
         }
 
         String contrasenaEncriptada = passwordEncoder.encode(nuevaContrasena);

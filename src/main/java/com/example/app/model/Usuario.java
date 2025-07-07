@@ -35,7 +35,7 @@ public class Usuario {
     @Column(name = "correo", unique = true)
     private String email;
 
-    @Column(name = "metodo_autenticacion")  // nuevo campo
+    @Column(name = "metodo_autenticacion")
     private String metodoAutenticacion;
 
     @Column(name = "contrasena_hash")
@@ -49,7 +49,6 @@ public class Usuario {
 
     public Usuario() {}
 
-    // Constructor con nuevo campo añadido
     public Usuario(Long id, String nombre, String email, String contrasenaHash, String metodoAutenticacion) {
         this.id = id;
         this.nombre = nombre;
@@ -58,7 +57,6 @@ public class Usuario {
         this.metodoAutenticacion = metodoAutenticacion;
     }
 
-    // Puedes tener constructor sin id si quieres
     public Usuario(String nombre, String email, String contrasenaHash, String metodoAutenticacion) {
         this.nombre = nombre;
         this.email = email;
@@ -66,7 +64,6 @@ public class Usuario {
         this.metodoAutenticacion = metodoAutenticacion;
     }
 
-    // GETTERS Y SETTERS
 
     public Long getId() {
         return id;

@@ -21,7 +21,6 @@ public class PictogramaConCategorias {
         this.categorias = categorias;
     }
 
-    // Getters y setters
     public Long getId() { return id; }
     public String getNombre() { return nombre; }
     public String getImagen() { return imagen; }

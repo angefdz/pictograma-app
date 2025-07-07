@@ -36,7 +36,6 @@ public class ConfiguracionController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof Usuario usuario) {
-            System.out.println("El email es (por favor funciona: "+usuario.getEmail());
             return usuario.getEmail();
         }
 
@@ -47,21 +46,16 @@ public class ConfiguracionController {
     public ResponseEntity<ConfiguracionSimple> obtenerConfiguracionDelUsuarioAutenticado() {
         try {
             String correo = getCorreoAutenticado();
-            Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
-
-            System.out.println(">>> DEBUG ConfiguracionController: Solicitud GET /configuraciones/usuario/yo para usuarioId: " + usuarioId);
+            Long usuarioId = usuarioService.obtenerId(correo);
 
             Optional<ConfiguracionSimple> configuracionSimple = configuracionService.getConfiguracionSimpleByUsuarioId(usuarioId);
 
             if (configuracionSimple.isPresent()) {
-                System.out.println(">>> DEBUG ConfiguracionController: Se encontró configuración. Devolviendo 200 OK.");
                 return ResponseEntity.ok(configuracionSimple.get());
             } else {
-                System.out.println(">>> DEBUG ConfiguracionController: No se encontró configuración. Devolviendo 404 Not Found.");
                 return ResponseEntity.notFound().build();
             }
         } catch (RuntimeException e) {
-            System.out.println(">>> ERROR ConfiguracionController: Usuario no autenticado. " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
@@ -83,9 +77,8 @@ public class ConfiguracionController {
     public ResponseEntity<Configuracion> actualizar(@PathVariable Integer id, @RequestBody Configuracion configuracionActualizada) {
         try {
             String correo = getCorreoAutenticado();
-            Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
+            Long usuarioId = usuarioService.obtenerId(correo);
 
-            // Asegura que se actualiza la configuración correcta
             configuracionActualizada.setId(id);
             configuracionActualizada.setUsuario(
                 usuarioService.obtenerPorId(usuarioId).orElseThrow()

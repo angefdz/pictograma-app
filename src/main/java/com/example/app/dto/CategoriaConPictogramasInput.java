@@ -6,7 +6,7 @@ public class CategoriaConPictogramasInput {
 
     private String nombre;
     private String imagen;
-    private List<Long> pictogramas; // IDs de pictogramas
+    private List<Long> pictogramas;
 
     public CategoriaConPictogramasInput() {}
 

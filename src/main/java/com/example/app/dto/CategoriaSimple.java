@@ -5,7 +5,7 @@ public class CategoriaSimple {
     private Long id;
     private String nombre;
     private String imagen;
-    private Long usuarioId; // 👈 Añadido
+    private Long usuarioId;
 
     public CategoriaSimple() {}
 

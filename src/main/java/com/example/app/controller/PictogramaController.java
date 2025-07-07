@@ -39,23 +39,12 @@ public class PictogramaController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof Usuario usuario) {
-        	System.out.println("El correo de los putos cojones es: "+usuario.getEmail());
             return usuario.getEmail();
         }
 
         return principal.toString();
     }
     
-    
-    @PostMapping("/general")
-    public ResponseEntity<PictogramaConCategorias> crearPictogramaGeneral(
-            @RequestBody PictogramaConCategoriasInput input
-    ) {
-    	System.out.println("Entra esto????");
-        PictogramaConCategorias creado = pictogramaService.crearPictogramaUsuario(null, input);
-        return ResponseEntity.ok(creado);
-    }
-
 
     @PostMapping
     public ResponseEntity<PictogramaConCategorias> createPictograma(@RequestBody PictogramaConCategoriasInput input) {
@@ -64,26 +53,19 @@ public class PictogramaController {
         }
 
         String correo = getCorreoAutenticado();
-        Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
+        Long usuarioId = usuarioService.obtenerId(correo);
         return ResponseEntity.ok(pictogramaService.crearPictograma(input, usuarioId));
     }
-
-
-
 
     @PostMapping("/yo")
     public ResponseEntity<PictogramaConCategorias> createPictogramaUsuario(@RequestBody PictogramaConCategoriasInput input) {
         String correo = getCorreoAutenticado();
-        System.out.println("El correo de los putísimos cojones estoy harta: "+ correo);
-        Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
-        System.out.println("El usuario de los putísimos cojones es: "+usuarioId);
-        System.out.println("No entiendo nada");
+        Long usuarioId = usuarioService.obtenerId(correo);
         return ResponseEntity.ok(pictogramaService.crearPictograma(input,usuarioId));
     }
 
     @GetMapping("/generales")
     public ResponseEntity<List<PictogramaConCategorias>> getPictogramasGenerales() {
-    	System.out.println("ESSTOY ENTRANDO");
         List<PictogramaConCategorias> pictogramas = pictogramaService.obtenerTodosConCategorias();
         if (pictogramas.isEmpty()) {
             return ResponseEntity.noContent().build();
@@ -102,7 +84,7 @@ public class PictogramaController {
     @GetMapping("/{id}")
     public ResponseEntity<PictogramaConCategorias> getPictogramaById(@PathVariable Long id) {
         String correo = getCorreoAutenticado();
-        Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
+        Long usuarioId = usuarioService.obtenerId(correo);
 
         return ResponseEntity.ok(pictogramaService.obtenerPictogramaConCategorias(id, usuarioId));
     }
@@ -117,7 +99,7 @@ public class PictogramaController {
             return ResponseEntity.badRequest().build();
         }
         String correo = getCorreoAutenticado();
-        Long idAutenticado = usuarioService.obtenerIdPorCorreo(correo);
+        Long idAutenticado = usuarioService.obtenerId(correo);
 
         PictogramaConCategorias actualizado = pictogramaService.actualizarPictograma(idAutenticado,id, input);
         return ResponseEntity.ok(actualizado);
@@ -127,7 +109,7 @@ public class PictogramaController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePictograma(@PathVariable Long id) {
         String correo = getCorreoAutenticado();
-        Long idAutenticado = usuarioService.obtenerIdPorCorreo(correo);
+        Long idAutenticado = usuarioService.obtenerId(correo);
 
         try {
             pictogramaService.eliminarPictograma(id, idAutenticado);
@@ -139,26 +121,10 @@ public class PictogramaController {
         }
     }
 
-
-
-    @PostMapping("/usuarios/{id}")
-    public ResponseEntity<PictogramaConCategorias> crearPictogramaUsuario(
-            @PathVariable Long id,
-            @RequestBody PictogramaConCategoriasInput input
-    ) {
-        try {
-        	System.out.println("Aquí?");
-            PictogramaConCategorias creado = pictogramaService.crearPictogramaUsuario(id, input);
-            return ResponseEntity.ok(creado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-    }
-
     @GetMapping("/{id}/con-categorias")
     public ResponseEntity<PictogramaConCategorias> getPictogramaConCategorias(@PathVariable Long id) {
         String correo = getCorreoAutenticado();
-        Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
+        Long usuarioId = usuarioService.obtenerId(correo);
 
         try {
             PictogramaConCategorias dto = pictogramaService.obtenerPictogramaConCategorias(id, usuarioId);
@@ -167,8 +133,6 @@ public class PictogramaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
-
 
     @PostMapping("/por-ids")
     public ResponseEntity<List<PictogramaSimple>> obtenerPictogramasPorIds(@RequestBody List<Long> ids) {
@@ -179,13 +143,10 @@ public class PictogramaController {
     @GetMapping
     public ResponseEntity<List<PictogramaSimple>> getPictogramasVisibles() {
         try {
-        	System.out.println("No esta ni siquiera entrando");
             String correo = getCorreoAutenticado();
-            Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
-            System.out.println("Parece que no se llega a ejecutar nunca");
+            Long usuarioId = usuarioService.obtenerId(correo);
             List<PictogramaSimple> pictogramas = pictogramaService.obtenerPictogramasVisibles(usuarioId);
             if (pictogramas.isEmpty()) {
-            	System.out.println("Estoy vacioooooo");
                 return ResponseEntity.noContent().build();
             }
 
@@ -200,7 +161,7 @@ public class PictogramaController {
         @PathVariable Long categoriaId) {
 
         String correo = getCorreoAutenticado();
-        Long usuarioId = usuarioService.obtenerIdPorCorreo(correo);
+        Long usuarioId = usuarioService.obtenerId(correo);
 
         List<PictogramaSimple> pictogramas = pictogramaService.obtenerPictogramasPorCategoria(categoriaId, usuarioId);
         

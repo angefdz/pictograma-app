@@ -1,7 +1,6 @@
 package com.example.app.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "pictogramas_categoria")
@@ -11,7 +10,6 @@ public class PictogramaCategoria {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    // Usuario que ha creado esta relación (nullable solo si la relación es general)
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = true)
     private Usuario usuario;

@@ -13,7 +13,6 @@ import com.example.app.model.Categoria;
 import com.example.app.model.Pictograma;
 import com.example.app.model.PictogramaOculto;
 import com.example.app.model.Usuario;
-import com.example.app.repository.CategoriaRepository;
 import com.example.app.repository.PictogramaCategoriaRepository;
 import com.example.app.repository.PictogramaOcultoRepository;
 import com.example.app.repository.PictogramaRepository;
@@ -31,8 +30,6 @@ public class PictogramaOcultoService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private CategoriaRepository categoriaRepository;
     
     @Autowired
     private PictogramaCategoriaRepository pictogramaCategoriaRepository;
@@ -104,11 +101,6 @@ public class PictogramaOcultoService {
 
     public List<PictogramaConCategorias> obtenerPictogramasOcultos(Long usuarioId) {
         List<PictogramaOculto> ocultos = repository.obtenerPictogramasOcultosPorUsuario(usuarioId);
-        if (ocultos.isEmpty()) {
-        	System.out.println("Estoy vaciooooo");
-        }else {
-        	System.out.println("no lo estoy");
-        }
         List<Pictograma> pictogramas = new ArrayList<>();
 
         for (PictogramaOculto po : ocultos) {

@@ -8,7 +8,7 @@ public class CategoriaConPictogramas {
     private String nombre;
     private String imagen;
     private List<PictogramaSimple> pictogramas;
-    private Long usuarioId; // Cambiado
+    private Long usuarioId; 
 
     public CategoriaConPictogramas() {}
 
@@ -20,7 +20,6 @@ public class CategoriaConPictogramas {
         this.usuarioId = usuarioId;
     }
 
-    // Getters y setters
     public Long getId() { return id; }
     public String getNombre() { return nombre; }
     public String getImagen() { return imagen; }

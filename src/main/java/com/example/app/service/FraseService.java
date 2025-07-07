@@ -1,6 +1,5 @@
 package com.example.app.service;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class FraseService {
 	public Frase crearFrase(Frase frase, Usuario usuario) {
 		if (frase.getFecha() == null) {
 	        frase.setFecha(new Date());
-	        frase.setUsuario(usuario);// o LocalDate.now() si usas solo la fecha
+	        frase.setUsuario(usuario);
 	    }
 		return fraseRepository.save(frase);
 	}

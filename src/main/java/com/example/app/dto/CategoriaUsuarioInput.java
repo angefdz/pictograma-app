@@ -7,7 +7,7 @@ public class CategoriaUsuarioInput {
     private String nombre;
     private String imagen;
     private Long usuarioId;
-    private List<Long> pictogramas; // IDs de pictogramas
+    private List<Long> pictogramas;
 
     public CategoriaUsuarioInput() {}
 

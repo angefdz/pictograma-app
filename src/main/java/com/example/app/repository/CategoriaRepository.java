@@ -10,11 +10,9 @@ import com.example.app.model.Categoria;
 
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
-    // Categorías generales (no asociadas a un usuario)
     @Query("SELECT c FROM Categoria c WHERE c.usuario IS NULL")
     List<Categoria> findAllGenerales();
 
-    // Si quieres también obtener las del usuario:
     List<Categoria> findByUsuario_Id(Long usuarioId);
     
 

@@ -1,7 +1,6 @@
 package com.example.app.service;
 
 import com.example.app.dto.PrediccionSimple;
-import com.example.app.model.Pictograma;
 import com.example.app.repository.PictogramaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;

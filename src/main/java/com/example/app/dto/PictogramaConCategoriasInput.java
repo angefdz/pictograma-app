@@ -7,8 +7,8 @@ public class PictogramaConCategoriasInput {
     private String nombre;
     private String tipo;
     private String imagen;
-    private Long usuario; // puede ser null si es pictograma general
-    private List<Long> categorias; // lista de IDs de categorías
+    private Long usuario; 
+    private List<Long> categorias; 
 
     public PictogramaConCategoriasInput() {}
 

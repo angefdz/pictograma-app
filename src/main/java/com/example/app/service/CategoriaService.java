@@ -24,7 +24,6 @@ import com.example.app.repository.PictogramaCategoriaRepository;
 import com.example.app.repository.PictogramaOcultoRepository;
 import com.example.app.repository.PictogramaRepository;
 import com.example.app.repository.UsuarioRepository;
-import com.example.app.service.PictogramaService.PictogramaNoEncontradoException;
 
 import jakarta.transaction.Transactional;
 
@@ -135,12 +134,16 @@ public class CategoriaService {
         });
     }
     public class CategoriaNoEncontradaException extends RuntimeException {
-        public CategoriaNoEncontradaException(String mensaje) {
+        private static final long serialVersionUID = 1L;
+
+		public CategoriaNoEncontradaException(String mensaje) {
             super(mensaje);
         }
     }
     public class AccesoProhibidoException extends RuntimeException {
-        public AccesoProhibidoException(String mensaje) {
+        private static final long serialVersionUID = 1L;
+
+		public AccesoProhibidoException(String mensaje) {
             super(mensaje);
         }
     }
@@ -160,8 +163,7 @@ public class CategoriaService {
 
 
 
-    // ============ MÉTODOS AUXILIARES DTO ============
-
+//------------------------ Métodos auxiliares----------------------------------
     private CategoriaConPictogramas convertirADTOConPictogramasFiltrados(Categoria categoria, List<Pictograma> pictogramasFiltrados) {
         List<PictogramaSimple> pictosDTO = pictogramasFiltrados.stream()
             .map(p -> new PictogramaSimple(p.getId(), p.getNombre(), p.getImagen(), p.getTipo()))
@@ -209,7 +211,6 @@ public class CategoriaService {
             }
         }
 
-        // 3. Recuperar pictogramas filtrados por usuario
         List<Pictograma> pictosFiltrados = obtenerPictogramasCategoriaParaUsuario(guardada.getId(), input.getUsuarioId());
         return convertirADTOConPictogramasFiltrados(guardada, pictosFiltrados);
     }
@@ -268,7 +269,6 @@ public class CategoriaService {
         if (pictogramaIds == null) {
             pictogramaIds = List.of(); // lista vacía
         }
-        // Eliminar relaciones actuales del usuario con esta categoría
         pictogramaCategoriaRepository.eliminarRelacionesPorCategoriaYUsuario(categoriaId, usuarioId);
 
         Usuario usuario = new Usuario();
@@ -286,11 +286,7 @@ public class CategoriaService {
         }
     }
     public List<CategoriaConPictogramas> obtenerCategoriasConPictogramasVisibles(Long usuarioId) {
-        System.out.println("PRIMER PASO");
-
         List<Categoria> categorias = categoriaRepository.findCategoriasVisiblesParaUsuario(usuarioId);
-
-        System.out.println("Segundo");
 
         List<PictogramaOculto> ocultos = pictogramaOcultoRepository.findByUsuarioId(usuarioId);
         Set<Long> pictogramasOcultos = new HashSet<>();
@@ -319,7 +315,6 @@ public class CategoriaService {
                             p.getImagen(),
                             p.getTipo()
                         );
-                        System.out.println(p.getId());
                         pictos.add(dto);
                     }
                 }
@@ -338,7 +333,6 @@ public class CategoriaService {
 
                 resultado.add(dto);
             } catch (Exception e) {
-                System.out.println("❌ Error al procesar categoría con ID: " + categoria.getId());
                 e.printStackTrace();
             }
         }
