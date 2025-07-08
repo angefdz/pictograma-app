@@ -30,15 +30,10 @@ public class JwtFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String path = request.getServletPath();
-        System.out.println("🔒 JwtFilter se está ejecutando para la ruta: " + path);
 
-     // Rutas públicas que no requieren autenticación
-     // Rutas públicas que no requieren autenticación
         if (path.equals("/auth/login") ||
         	    path.equals("/auth/register") ||
-        	    path.equals("/categorias/general") ||
-        	    path.equals("/pictogramas/generales") ||
-        	    path.equals("/pictogramas/general")) {
+        	    path.equals("/categorias/general")) {
         	    filterChain.doFilter(request, response);
         	    return;
         	}
@@ -50,9 +45,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             String email = jwtUtil.extractEmail(token);
-            System.out.println(token);
 
-            System.out.println("Email extraído del token: " + email);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 Usuario usuario = usuarioRepository.buscarPorEmail(email).orElse(null);
@@ -64,13 +57,13 @@ public class JwtFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                    System.out.println("✅ Usuario autenticado correctamente: " + usuario.getEmail());
+                    System.out.println("Usuario autenticado correctamente: " + usuario.getEmail());
                 } else {
-                    System.out.println("❌ Token inválido o usuario no encontrado");
+                    System.out.println(" Token inválido o usuario no encontrado");
                 }
             }
         } else {
-            System.out.println("⚠️ No se encontró cabecera Authorization válida");
+            System.out.println("No se encontró cabecera Authorization válida");
         }
 
         filterChain.doFilter(request, response);

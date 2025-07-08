@@ -1,20 +1,24 @@
 package com.example.app.config.security;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
-
 import java.security.Key;
 import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
 
-    // 🔐 CLAVE FIJA: asegúrate de que tiene al menos 32 caracteres
-    private static final String SECRET_KEY = "k42Fh8$g7Wx!JzQ2p4@MsN3#A0LpD6vQxUeRm7^bY9XzFtH1"; // puedes poner la tuya si quieres
+	 private final Key key;
 
+	    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
+	        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+	    }
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 horas
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
     public String generateToken(String email) {
         return Jwts.builder()
