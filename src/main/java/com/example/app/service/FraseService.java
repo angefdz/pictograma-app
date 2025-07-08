@@ -21,6 +21,8 @@ public class FraseService {
 	        frase.setFecha(new Date());
 	        frase.setUsuario(usuario);
 	    }
+		System.out.println("la fras es: "+frase.getTexto());
+		System.out.println("El usuario es: "+usuario.getNombre());
 		return fraseRepository.save(frase);
 	}
 	

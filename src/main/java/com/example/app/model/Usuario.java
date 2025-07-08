@@ -35,8 +35,7 @@ public class Usuario {
     @Column(name = "correo", unique = true)
     private String email;
 
-    @Column(name = "metodo_autenticacion")
-    private String metodoAutenticacion;
+
 
     @Column(name = "contrasena_hash")
     private String contrasena;
@@ -54,14 +53,12 @@ public class Usuario {
         this.nombre = nombre;
         this.email = email;
         this.contrasena = contrasenaHash;
-        this.metodoAutenticacion = metodoAutenticacion;
     }
 
     public Usuario(String nombre, String email, String contrasenaHash, String metodoAutenticacion) {
         this.nombre = nombre;
         this.email = email;
         this.contrasena = contrasenaHash;
-        this.metodoAutenticacion = metodoAutenticacion;
     }
 
 
@@ -89,13 +86,7 @@ public class Usuario {
         this.email = email;
     }
 
-    public String getMetodoAutenticacion() {
-        return metodoAutenticacion;
-    }
-
-    public void setMetodoAutenticacion(String metodoAutenticacion) {
-        this.metodoAutenticacion = metodoAutenticacion;
-    }
+ 
 
     public String getContrasena() {
         return contrasena;

@@ -1,24 +1,19 @@
 package com.example.app.config.security;
 
-import java.security.Key;
-import java.util.Date;
-
-import org.springframework.beans.factory.annotation.Value;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-	 private final Key key;
+    private static final String SECRET_KEY = "k42Fh8$g7Wx!JzQ2p4@MsN3#A0LpD6vQxUeRm7^bY9XzFtH1"; 
 
-	    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
-	        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
-	    }
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 horas
+    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
     public String generateToken(String email) {
         return Jwts.builder()

@@ -28,15 +28,15 @@ public class FraseController {
 	@Autowired
 	private UsuarioRepository usuarioRepository;
 
-	private String getCorreoAutenticado() {
-	    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	 private String getCorreoAutenticado() {
+	        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-	    if (principal instanceof Usuario usuario) {
-	        return usuario.getEmail();
+	        if (principal instanceof Usuario usuario) {
+	            return usuario.getEmail();
+	        }
+	        
+	        return principal.toString();
 	    }
-
-	    return principal.toString();
-	}
 
 	@PostMapping
 	public ResponseEntity<Frase> createFrase(@RequestBody Frase f) {

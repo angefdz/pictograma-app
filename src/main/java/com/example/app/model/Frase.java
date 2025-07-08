@@ -12,6 +12,7 @@ public class Frase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id")
     private Long idFrase;
 
     @NotNull

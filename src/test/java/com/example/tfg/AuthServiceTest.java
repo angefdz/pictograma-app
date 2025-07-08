@@ -77,7 +77,6 @@ class AuthServiceTest {
     void autenticarUsuario_ValidoYManual_DevuelveTrue() {
         Usuario usuario = new Usuario();
         usuario.setEmail("test@correo.com");
-        usuario.setMetodoAutenticacion("manual");
         usuario.setContrasena("hashed");
 
         when(usuarioRepository.buscarPorEmail("test@correo.com")).thenReturn(Optional.of(usuario));
@@ -91,7 +90,6 @@ class AuthServiceTest {
     @Test
     void autenticarUsuario_MetodoGoogle_DevuelveFalse() {
         Usuario usuario = new Usuario();
-        usuario.setMetodoAutenticacion("google");
 
         when(usuarioRepository.buscarPorEmail("google@correo.com")).thenReturn(Optional.of(usuario));
 

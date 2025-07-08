@@ -43,7 +43,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, String>> register(@Valid @RequestBody Usuario usuario) {
-        usuario.setMetodoAutenticacion("manual");
 
         try {
             if (!authService.registrarUsuario(usuario)) {
@@ -96,7 +95,6 @@ public class AuthController {
 
     @PostMapping("/google")
     public ResponseEntity<Map<String, Object>> loginGoogle(@RequestBody Usuario usuarioGoogle) {
-        usuarioGoogle.setMetodoAutenticacion("google");
 
         Optional<Usuario> usuarioOpt = authService.buscarPorEmail(usuarioGoogle.getEmail());
 

@@ -75,9 +75,6 @@ public class AuthService {
 
         Usuario usuario = usuarioOpt.get();
 
-        if (!"manual".equalsIgnoreCase(usuario.getMetodoAutenticacion())) {
-            return false; 
-        }
         return passwordEncoder.matches(contrasenaPlano, usuario.getContrasena());
     }
 
@@ -87,7 +84,6 @@ public class AuthService {
             throw new IllegalStateException("El usuario con ese correo ya existe");
         }
 
-        usuario.setMetodoAutenticacion("google");
 
         Usuario nuevoUsuario = usuarioRepository.save(usuario);
 
