@@ -1,18 +1,17 @@
-# Usa una imagen de Maven con JDK 17 para compilar
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+# Etapa de construcción: usa Maven con JDK 17
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
 
-# Copia los archivos del proyecto y compila
 WORKDIR /app
-COPY . .
+COPY pom.xml .
+COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Usa una imagen liviana con Java 17 para ejecutar el jar
+# Etapa de ejecución: imagen ligera con Java 17 JDK
 FROM eclipse-temurin:17-jdk
-WORKDIR /app
-COPY --from=build /app/target/tfg-0.0.1-SNAPSHOT.jar app.jar
 
-# Expone el puerto 8080
+WORKDIR /app
+COPY --from=builder /app/target/tfg-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8080
 
-# Ejecuta el .jar
 ENTRYPOINT ["java", "-jar", "app.jar"]

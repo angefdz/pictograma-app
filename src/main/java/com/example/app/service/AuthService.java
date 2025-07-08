@@ -1,5 +1,6 @@
 package com.example.app.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,12 +35,11 @@ public class AuthService {
     private boolean esContrasenaSegura(String contrasena) {
         if (contrasena == null) return false;
 
-       //return contrasena.length() >= 8 &&
-         //      contrasena.matches(".*[a-z].*") &&     // minúscula
-           //    contrasena.matches(".*[A-Z].*") &&     // mayúscula
-             //contrasena.matches(".*\\d.*") &&       // número
-               //contrasena.matches(".*[^a-zA-Z0-9].*"); // símbolo
-        return true;
+       return contrasena.length() >= 8 &&
+               contrasena.matches(".*[a-z].*") &&     // minúscula
+               contrasena.matches(".*[A-Z].*") &&     // mayúscula
+             contrasena.matches(".*\\d.*") &&       // número
+               contrasena.matches(".*[^a-zA-Z0-9].*"); // símbolo
     }
     @Transactional 
     public boolean registrarUsuario(Usuario usuario) {
@@ -63,7 +63,7 @@ public class AuthService {
         configuracionRepository.save(configuracionDefault);
 
         nuevoUsuario.setConfiguracion(configuracionDefault);
-        
+
         inicializarRelacionesParaUsuarioNuevo(nuevoUsuario);
 
         return true; 
@@ -99,8 +99,6 @@ public class AuthService {
 
         configuracionRepository.save(configuracionDefault);
 
-        nuevoUsuario.setConfiguracion(configuracionDefault);
-
         return nuevoUsuario;
     }
 
@@ -109,17 +107,27 @@ public class AuthService {
         return usuarioRepository.buscarPorEmail(email);
     }
     
+    @Transactional
     private void inicializarRelacionesParaUsuarioNuevo(Usuario usuario) {
-    	List<PictogramaCategoria> relacionesGenerales = pictogramaCategoriaRepository.findAllGenerales();
+        if (usuario == null || usuario.getId() == null) {
+            throw new IllegalArgumentException("Usuario no válido para inicializar relaciones.");
+        }
 
-    	for (PictogramaCategoria general : relacionesGenerales) {
-    	    PictogramaCategoria relacion = new PictogramaCategoria();
-    	    relacion.setCategoria(general.getCategoria());
-    	    relacion.setPictograma(general.getPictograma());
-    	    relacion.setUsuario(usuario);
-    	    pictogramaCategoriaRepository.save(relacion);
-    	}
+        List<PictogramaCategoria> relacionesGenerales = pictogramaCategoriaRepository.findAllGenerales();
+
+        List<PictogramaCategoria> nuevasRelaciones = new ArrayList<>(relacionesGenerales.size());
+
+        for (PictogramaCategoria general : relacionesGenerales) {
+            PictogramaCategoria relacion = new PictogramaCategoria();
+            relacion.setCategoria(general.getCategoria());
+            relacion.setPictograma(general.getPictograma());
+            relacion.setUsuario(usuario);
+            nuevasRelaciones.add(relacion);
+        }
+
+        pictogramaCategoriaRepository.saveAll(nuevasRelaciones);
     }
+
     
     @Transactional
     public boolean cambiarContrasena(String email, String contrasenaActual, String nuevaContrasena) {

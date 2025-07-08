@@ -216,5 +216,38 @@ public class PictogramaService {
             .map(Pictograma::getNombre)
             .toList();
     }
+    @Transactional
+    public PictogramaConCategorias crearPictogramaUsuario(Long usuarioId, PictogramaConCategoriasInput input) {
+        Pictograma pictograma = new Pictograma();
+        pictograma.setNombre(input.getNombre());
+        pictograma.setTipo(input.getTipo());
+        pictograma.setImagen(input.getImagen());
+
+        Usuario usuario = null;
+        if (usuarioId != null) {
+            usuario = usuarioRepository.buscarPorId(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        }
+        pictograma.setUsuario(usuario);
+
+        pictograma = pictogramaRepository.save(pictograma);
+
+        if (input.getCategorias() != null && !input.getCategorias().isEmpty()) {
+            for (Long categoriaId : input.getCategorias()) {
+                Categoria categoria = categoriaRepository.findById(categoriaId)
+                    .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+
+                PictogramaCategoria relacion = new PictogramaCategoria();
+                relacion.setPictograma(pictograma);
+                relacion.setCategoria(categoria);
+                relacion.setUsuario(usuario);
+
+                pictogramaCategoriaRepository.save(relacion);
+            }
+        }
+
+        Long idUsuario = (usuario != null) ? usuario.getId() : null;
+        return convertirADTO(pictograma, idUsuario);
+    }
 
 }

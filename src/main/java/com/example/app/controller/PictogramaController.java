@@ -46,6 +46,14 @@ public class PictogramaController {
     }
     
 
+    @PostMapping("/general")
+    public ResponseEntity<PictogramaConCategorias> crearPictogramaGeneral(
+            @RequestBody PictogramaConCategoriasInput input
+    ) {
+        PictogramaConCategorias creado = pictogramaService.crearPictogramaUsuario(null, input);
+        return ResponseEntity.ok(creado);
+    }
+    
     @PostMapping
     public ResponseEntity<PictogramaConCategorias> createPictograma(@RequestBody PictogramaConCategoriasInput input) {
         if (input.getNombre() == null || input.getTipo() == null) {

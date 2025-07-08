@@ -32,7 +32,10 @@ public class SeguridadConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/auth/register",
-                    "/auth/login"
+                    "/auth/login",
+                    "/categorias/general",
+                    "/pictogramas/general",
+                    "/pictogramas/generales"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
