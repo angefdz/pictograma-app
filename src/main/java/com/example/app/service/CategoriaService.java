@@ -99,7 +99,6 @@ public class CategoriaService {
     }
 
     public CategoriaConPictogramas obtenerCategoriaConPictogramas(Long id, Long usuarioId) {
-        // Forzamos la recarga desde la base de datos para evitar caché de persistencia
         Categoria categoriaActualizada = categoriaRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
@@ -205,7 +204,7 @@ public class CategoriaService {
                 PictogramaCategoria relacion = new PictogramaCategoria();
                 relacion.setCategoria(guardada);
                 relacion.setPictograma(pictograma);
-                relacion.setUsuario(usuario); // siempre asigna el usuario
+                relacion.setUsuario(usuario);
 
                 pictogramaCategoriaRepository.save(relacion);
             }

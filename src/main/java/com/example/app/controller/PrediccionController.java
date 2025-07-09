@@ -1,4 +1,3 @@
-// src/main/java/com/example/app/controller/PrediccionController.java
 package com.example.app.controller;
 
 import com.example.app.service.PrediccionService;

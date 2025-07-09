@@ -14,7 +14,6 @@ public class Configuracion implements Serializable {
     @Column(name="id")
     private Integer id;
 
-    // Relación OneToOne con Usuario
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false, unique = true)
     private Usuario usuario;

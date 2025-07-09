@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.app.dto.UsuarioSimple;
 import com.example.app.model.Usuario;
-import com.example.app.service.UsuarioService; // Importa tu servicio
+import com.example.app.service.UsuarioService;
 
 @RestController
 @RequestMapping("/usuarios")

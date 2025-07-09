@@ -1,4 +1,3 @@
-// src/main/java/com/example/app/config/RestTemplateConfig.java
 package com.example.app.config;
 
 import org.springframework.context.annotation.Bean;

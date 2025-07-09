@@ -73,7 +73,7 @@ public class PictogramaOcultoController {
     @GetMapping("/usuario")
     public ResponseEntity<List<PictogramaConCategorias>> getPictogramasOcultos() {
         try {
-            String correo = getCorreoAutenticado();  // Método que obtienes del token
+            String correo = getCorreoAutenticado(); 
             Long usuarioId = usuarioService.obtenerId(correo);
             List<PictogramaConCategorias> ocultos = pictogramaOcultoService.obtenerPictogramasOcultos(usuarioId);
             
