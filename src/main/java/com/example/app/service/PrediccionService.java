@@ -30,7 +30,7 @@ public class PrediccionService {
     }
 
     private List<Long> sugerenciasPorDefecto() {
-        return List.of(84L);
+        return List.of(84L, 43L, 650L);
     }
 
     public List<Long> obtenerSugerencias(String frase, String pictogramas, String texto, String idioma) {

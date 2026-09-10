@@ -77,4 +77,12 @@ class PrediccionServiceTest {
         assertEquals(List.of(202L, 1L, 4L), resultado);
         servidorModelo.verify();
     }
+
+    @Test
+    void devuelveYoQuererYEstarCuandoLaFraseEstaVacia() {
+        List<Long> resultado = service.obtenerSugerencias("", "", "", "es");
+
+        assertEquals(List.of(84L, 43L, 650L), resultado);
+        servidorModelo.verify();
+    }
 }
