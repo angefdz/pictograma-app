@@ -10,6 +10,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.client.ExpectedCount.once;
@@ -52,6 +53,28 @@ class PrediccionServiceTest {
         String resultado = service.obtenerSugerencia("yo\u001fquerer", "10,11", "es");
 
         assertEquals("Agua", resultado);
+        servidorModelo.verify();
+    }
+
+    @Test
+    void devuelveTresIdsValidosEnElOrdenDelModelo() {
+        when(pictogramaRepository.existsById(202L)).thenReturn(true);
+        when(pictogramaRepository.existsById(1L)).thenReturn(true);
+        when(pictogramaRepository.existsById(4L)).thenReturn(true);
+        servidorModelo.expect(once(), requestTo("http://modelo:8000/predecir"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess("""
+                        {"pictograma_id":202,"sugerencia":"Agua","alternativas":[
+                          {"pictograma_id":202,"sugerencia":"Agua","confianza":0.5},
+                          {"pictograma_id":1,"sugerencia":"Comer","confianza":0.3},
+                          {"pictograma_id":4,"sugerencia":"Jugar","confianza":0.2}
+                        ]}
+                        """, MediaType.APPLICATION_JSON));
+
+        List<Long> resultado = service.obtenerSugerencias(
+                "yo\u001fquerer", "84,43", "Yo quiero", "es");
+
+        assertEquals(List.of(202L, 1L, 4L), resultado);
         servidorModelo.verify();
     }
 }

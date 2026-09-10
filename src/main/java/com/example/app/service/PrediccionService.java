@@ -12,6 +12,7 @@ import org.springframework.web.client.RestClientException;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.List;
+import java.util.LinkedHashSet;
 
 @Service
 public class PrediccionService {
@@ -28,6 +29,33 @@ public class PrediccionService {
         return "en".equalsIgnoreCase(idioma) ? "Hello" : "Hola";
     }
 
+    private List<Long> sugerenciasPorDefecto() {
+        return List.of(84L);
+    }
+
+    public List<Long> obtenerSugerencias(String frase, String pictogramas, String texto, String idioma) {
+        if (pictogramas == null || pictogramas.isBlank()) {
+            return sugerenciasPorDefecto();
+        }
+        PrediccionSimple respuesta = solicitarPrediccion(frase, pictogramas, texto, idioma);
+        if (respuesta == null) {
+            return List.of();
+        }
+        List<PrediccionSimple> candidatas = respuesta.getAlternativas();
+        if (candidatas == null || candidatas.isEmpty()) {
+            candidatas = List.of(respuesta);
+        }
+        LinkedHashSet<Long> ids = new LinkedHashSet<>();
+        for (PrediccionSimple candidata : candidatas) {
+            Long id = candidata.getPictogramaId();
+            if (id != null && pictogramaRepository.existsById(id)) {
+                ids.add(id);
+            }
+            if (ids.size() == 3) break;
+        }
+        return List.copyOf(ids);
+    }
+
     public String obtenerSugerencia(String frase, String pictogramas, String idioma) {
         return obtenerSugerencia(frase, pictogramas, frase, idioma);
     }
@@ -36,6 +64,14 @@ public class PrediccionService {
         if (frase == null || frase.isBlank()) {
             return sugerenciaPorDefecto(idioma);
         }
+        PrediccionSimple respuesta = solicitarPrediccion(frase, pictogramas, texto, idioma);
+        String sugerencia = respuesta != null ? respuesta.getSugerencia() : null;
+        Long pictogramaId = respuesta != null ? respuesta.getPictogramaId() : null;
+        return sugerencia != null && !sugerencia.isBlank() && pictogramaId != null
+                && pictogramaRepository.existsById(pictogramaId) ? sugerencia : sugerenciaPorDefecto(idioma);
+    }
+
+    private PrediccionSimple solicitarPrediccion(String frase, String pictogramas, String texto, String idioma) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -51,18 +87,8 @@ public class PrediccionService {
             respuesta = restTemplate.postForEntity(
                     urlFastApi, request, PrediccionSimple.class);
         } catch (RestClientException exception) {
-            return sugerenciaPorDefecto(idioma);
+            return null;
         }
-
-        String sugerencia = respuesta.getBody() != null ? respuesta.getBody().getSugerencia() : null;
-        Long pictogramaId = respuesta.getBody() != null ? respuesta.getBody().getPictogramaId() : null;
-
-        boolean sugerenciaValida = sugerencia != null && !sugerencia.isBlank()
-                && pictogramaId != null && pictogramaRepository.existsById(pictogramaId);
-        if (sugerenciaValida) {
-            return sugerencia;
-        } else {
-            return sugerenciaPorDefecto(idioma);
-        }
+        return respuesta.getBody();
     }
 }
