@@ -16,7 +16,7 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     List<Categoria> findByUsuario_Id(Long usuarioId);
     
 
-    
+     
     @Query("""
     	    SELECT c FROM Categoria c
     	    WHERE c.usuario IS NULL OR c.usuario.id = :usuarioId

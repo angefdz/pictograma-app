@@ -13,3 +13,4 @@ public interface FraseRepository extends JpaRepository<Frase, Long> {
 	@Query("SELECT f FROM Frase f WHERE f.usuario.id = :usuarioId")
     List<Frase> findByUsuarioId(@Param("usuarioId") Long usuarioId);
 }
+ 

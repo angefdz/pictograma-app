@@ -46,8 +46,8 @@ public class UsuarioController {
 
 
     @GetMapping()
-    public ResponseEntity<List<Usuario>> getUsuarios() {
-        List<Usuario> usuarios = usuarioService.obtenerTodos();
+    public ResponseEntity<List<UsuarioSimple>> getUsuarios() {
+        List<UsuarioSimple> usuarios = usuarioService.obtenerTodos();
         if (usuarios.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -68,7 +68,7 @@ public class UsuarioController {
                     dto.setCorreo(usuario.getEmail());
                     dto.setNombre(usuario.getNombre());
                     return ResponseEntity.ok(dto);
-                })
+                }) 
                 .orElseGet(() -> ResponseEntity.notFound().build());
 
         } catch (RuntimeException e) {

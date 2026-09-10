@@ -9,6 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.MapKeyColumn;
+import java.util.HashMap;
+import java.util.Map;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -33,6 +38,12 @@ public class Pictograma {
     @NotEmpty
     @Column(nullable = false)
     private String tipo;
+
+    @ElementCollection
+    @CollectionTable(name = "pictograma_traducciones", joinColumns = @JoinColumn(name = "pictograma_id"))
+    @MapKeyColumn(name = "idioma")
+    @Column(name = "nombre", nullable = false)
+    private Map<String, String> traducciones = new HashMap<>();
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = true)
@@ -66,6 +77,11 @@ public class Pictograma {
 
     public Usuario getUsuario() {
         return usuario;
+    }
+
+    public Map<String, String> getTraducciones() { return traducciones; }
+    public void setTraducciones(Map<String, String> traducciones) {
+        this.traducciones = traducciones == null ? new HashMap<>() : traducciones;
     }
 
     public void setNombre(String nombre) {

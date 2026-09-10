@@ -12,7 +12,12 @@ public class PrediccionController {
     private PrediccionService prediccionService;
 
     @GetMapping
-    public String sugerir(@RequestParam String frase) {
-        return prediccionService.obtenerSugerencia(frase);
-    }
+    public String sugerir(@RequestParam(required = false) String frase,
+                         @RequestParam(required = false) String lemas,
+                         @RequestParam(required = false) String texto,
+                         @RequestParam(required = false) String pictogramas,
+                         @RequestParam(defaultValue = "es") String idioma) {
+        String entrada = lemas != null && !lemas.isBlank() ? lemas : frase;
+        return prediccionService.obtenerSugerencia(entrada, pictogramas, texto, idioma);
+    } 
 }

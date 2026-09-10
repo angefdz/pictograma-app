@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import com.example.app.model.Pictograma;
 
 public interface PictogramaRepository extends JpaRepository<Pictograma, Long> {
-
+ 
     @Query("SELECT p FROM Pictograma p WHERE p.usuario IS NULL")
     List<Pictograma> findAllGenerales();
 

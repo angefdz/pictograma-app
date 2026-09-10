@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +24,7 @@ import com.example.app.service.UsuarioService;
 @RequestMapping("/configuraciones")
 public class ConfiguracionController {
 
-    @Autowired
+    @Autowired 
     private ConfiguracionService configuracionService;
 
     @Autowired
@@ -61,31 +59,29 @@ public class ConfiguracionController {
     }
 
 
-    @PostMapping
-    public ResponseEntity<Configuracion> crearOActualizar(@RequestBody Configuracion configuracion) {
-        Configuracion guardada = configuracionService.guardarConfiguracion(configuracion);
-        return ResponseEntity.ok(guardada);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
-        configuracionService.eliminarConfiguracion(id);
-        return ResponseEntity.noContent().build();
-    }
-    
     @PutMapping("/{id}")
-    public ResponseEntity<Configuracion> actualizar(@PathVariable Integer id, @RequestBody Configuracion configuracionActualizada) {
+    public ResponseEntity<ConfiguracionSimple> actualizar(@PathVariable Integer id, @RequestBody Configuracion configuracionActualizada) {
         try {
             String correo = getCorreoAutenticado();
             Long usuarioId = usuarioService.obtenerId(correo);
+
+            Optional<ConfiguracionSimple> configuracionPropia = configuracionService.getConfiguracionSimpleByUsuarioId(usuarioId);
+            if (configuracionPropia.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            if (!configuracionPropia.get().getId().equals(id)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
 
             configuracionActualizada.setId(id);
             configuracionActualizada.setUsuario(
                 usuarioService.obtenerPorId(usuarioId).orElseThrow()
             );
 
-            Configuracion actualizada = configuracionService.guardarConfiguracion(configuracionActualizada);
-            return ResponseEntity.ok(actualizada);
+            configuracionService.guardarConfiguracion(configuracionActualizada);
+            return configuracionService.getConfiguracionSimpleByUsuarioId(usuarioId)
+                    .map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.notFound().build());
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

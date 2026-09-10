@@ -2,6 +2,7 @@ package com.example.app.config.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -10,18 +11,26 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private static final String SECRET_KEY = "k42Fh8$g7Wx!JzQ2p4@MsN3#A0LpD6vQxUeRm7^bY9XzFtH1"; 
+    private final long expirationTime;
+    private final Key key;
 
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 10; // 10 horas
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+    public JwtUtil(
+            @Value("${jwt.secret}") String secretKey,
+            @Value("${jwt.expiration:36000000}") long expirationTime) {
+        if (secretKey == null || secretKey.length() < 32) {
+            throw new IllegalArgumentException("JWT_SECRET debe tener al menos 32 caracteres");
+        }
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        this.expirationTime = expirationTime;
+    }
 
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key)
-                .compact();
+                .compact(); 
     }
 
     public String extractEmail(String token) {

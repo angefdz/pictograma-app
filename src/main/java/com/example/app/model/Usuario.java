@@ -3,6 +3,8 @@ package com.example.app.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,6 +40,7 @@ public class Usuario {
 
 
     @Column(name = "contrasena_hash")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String contrasena;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)

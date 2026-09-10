@@ -36,12 +36,15 @@ public class PictogramaService {
     
     @Autowired
     private UsuarioRepository usuarioRepository;
-
+ 
     public PictogramaConCategorias crearPictograma(PictogramaConCategoriasInput input, Long usuarioId) {
         Pictograma pictograma = new Pictograma();
         pictograma.setNombre(input.getNombre());
         pictograma.setTipo(input.getTipo());
         pictograma.setImagen(input.getImagen());
+        if (input.getTraducciones() != null) {
+            pictograma.setTraducciones(input.getTraducciones());
+        }
         if (usuarioId != null) {
             usuarioRepository.buscarPorId(usuarioId).ifPresent(pictograma::setUsuario);
         } else {
@@ -73,6 +76,9 @@ public class PictogramaService {
         pictograma.setNombre(input.getNombre());
         pictograma.setTipo(input.getTipo());
         pictograma.setImagen(input.getImagen());
+        if (input.getTraducciones() != null) {
+            pictograma.setTraducciones(input.getTraducciones());
+        }
 
         Pictograma actualizado = pictogramaRepository.save(pictograma);
 
@@ -133,11 +139,13 @@ public class PictogramaService {
 
         for (Categoria c : categorias) {
             Long usuarioIdCategoria = (c.getUsuario() != null) ? c.getUsuario().getId() : null;
-            categoriasDTO.add(new CategoriaSimple(c.getId(), c.getNombre(), c.getImagen(), usuarioIdCategoria));
+            CategoriaSimple categoriaDTO = new CategoriaSimple(c.getId(), c.getNombre(), c.getImagen(), usuarioIdCategoria);
+            categoriaDTO.setTraducciones(c.getTraducciones());
+            categoriasDTO.add(categoriaDTO);
         }
         Long usuarioIdPictograma = (p.getUsuario() != null) ? p.getUsuario().getId() : null;
 
-        return new PictogramaConCategorias(
+        PictogramaConCategorias dto = new PictogramaConCategorias(
             p.getId(),
             p.getNombre(),
             p.getImagen(),
@@ -145,6 +153,8 @@ public class PictogramaService {
             usuarioIdPictograma,
             categoriasDTO
         );
+        dto.setTraducciones(p.getTraducciones());
+        return dto;
     }
     public List<PictogramaSimple> obtenerPictogramasPorIds(List<Long> ids) {
         List<PictogramaSimple> resultado = new ArrayList<>();
@@ -163,6 +173,7 @@ public class PictogramaService {
         dto.setNombre(p.getNombre());
         dto.setImagen(p.getImagen());
         dto.setTipo(p.getTipo());
+        dto.setTraducciones(p.getTraducciones());
         return dto;
     }
 
@@ -222,6 +233,7 @@ public class PictogramaService {
         pictograma.setNombre(input.getNombre());
         pictograma.setTipo(input.getTipo());
         pictograma.setImagen(input.getImagen());
+        pictograma.setTraducciones(input.getTraducciones());
 
         Usuario usuario = null;
         if (usuarioId != null) {

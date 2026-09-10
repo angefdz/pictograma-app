@@ -50,8 +50,7 @@ public class PictogramaController {
     public ResponseEntity<PictogramaConCategorias> crearPictogramaGeneral(
             @RequestBody PictogramaConCategoriasInput input
     ) {
-        PictogramaConCategorias creado = pictogramaService.crearPictogramaUsuario(null, input);
-        return ResponseEntity.ok(creado);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
     
     @PostMapping
@@ -156,7 +155,7 @@ public class PictogramaController {
             List<PictogramaSimple> pictogramas = pictogramaService.obtenerPictogramasVisibles(usuarioId);
             if (pictogramas.isEmpty()) {
                 return ResponseEntity.noContent().build();
-            }
+            } 
 
             return ResponseEntity.ok(pictogramas);
         } catch (RuntimeException e) {

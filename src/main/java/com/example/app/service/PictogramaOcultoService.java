@@ -97,7 +97,7 @@ public class PictogramaOcultoService {
             resultado.add(convertirADTO(p,usuarioId));
         }
         return resultado;
-    }
+    } 
 
     public List<PictogramaConCategorias> obtenerPictogramasOcultos(Long usuarioId) {
         List<PictogramaOculto> ocultos = repository.obtenerPictogramasOcultosPorUsuario(usuarioId);

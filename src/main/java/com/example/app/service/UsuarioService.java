@@ -22,8 +22,16 @@ public class UsuarioService {
     
     @Autowired PictogramaCategoriaRepository pictogramaCategoriaRepository;
 
-    public List<Usuario> obtenerTodos() {
-        return usuarioRepository.findAll();
+    public List<UsuarioSimple> obtenerTodos() {
+        return usuarioRepository.findAll().stream()
+                .map(usuario -> {
+                    UsuarioSimple dto = new UsuarioSimple();
+                    dto.setId(usuario.getId());
+                    dto.setNombre(usuario.getNombre());
+                    dto.setCorreo(usuario.getEmail());
+                    return dto;
+                })
+                .toList();
     }
 
     public Optional<Usuario> obtenerPorId(Long id) {

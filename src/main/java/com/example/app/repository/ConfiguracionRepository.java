@@ -12,3 +12,4 @@ public interface ConfiguracionRepository extends JpaRepository<Configuracion, In
 	@Query("SELECT c FROM Configuracion c WHERE c.usuario.id = :usuarioId")
     Configuracion buscarPorUsuario(Long usuarioId);
 }
+ 

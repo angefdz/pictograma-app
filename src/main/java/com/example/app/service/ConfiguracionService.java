@@ -29,7 +29,7 @@ public class ConfiguracionService {
         dto.setId(configuracion.getId());
         dto.setBotonesPorPantalla(configuracion.getBotonesPorPantalla());
         dto.setMostrarPorCategoria(configuracion.getMostrarPorCategoria());
-        
+         
         if (configuracion.getTipoVoz() != null) {
             dto.setTipoVoz(configuracion.getTipoVoz().name()); 
         } else {

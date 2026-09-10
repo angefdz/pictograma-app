@@ -38,7 +38,7 @@ public class CategoriaService {
 
     @Autowired
     private CategoriaRepository categoriaRepository;
-
+ 
     @Autowired
     private PictogramaRepository pictogramaRepository;
     
@@ -51,6 +51,7 @@ public class CategoriaService {
         Categoria categoria = new Categoria();
         categoria.setNombre(input.getNombre());
         categoria.setImagen(input.getImagen());
+        categoria.setTraducciones(input.getTraducciones());
         categoria.setUsuario(null);
 
         Categoria guardada = categoriaRepository.save(categoria);
@@ -112,6 +113,9 @@ public class CategoriaService {
         return categoriaRepository.findById(id).map(categoria -> {
             categoria.setNombre(input.getNombre());
             categoria.setImagen(input.getImagen());
+            if (input.getTraducciones() != null) {
+                categoria.setTraducciones(input.getTraducciones());
+            }
             Categoria actualizada = categoriaRepository.save(categoria);
 
             Long usuarioId = categoria.getUsuario() != null ? categoria.getUsuario().getId() : null;
@@ -165,7 +169,11 @@ public class CategoriaService {
 //------------------------ Métodos auxiliares----------------------------------
     private CategoriaConPictogramas convertirADTOConPictogramasFiltrados(Categoria categoria, List<Pictograma> pictogramasFiltrados) {
         List<PictogramaSimple> pictosDTO = pictogramasFiltrados.stream()
-            .map(p -> new PictogramaSimple(p.getId(), p.getNombre(), p.getImagen(), p.getTipo()))
+            .map(p -> {
+                PictogramaSimple dto = new PictogramaSimple(p.getId(), p.getNombre(), p.getImagen(), p.getTipo());
+                dto.setTraducciones(p.getTraducciones());
+                return dto;
+            })
             .toList();
 
         Long usuarioId = null;
@@ -173,13 +181,15 @@ public class CategoriaService {
             usuarioId = categoria.getUsuario().getId();
         }
 
-        return new CategoriaConPictogramas(
+        CategoriaConPictogramas dto = new CategoriaConPictogramas(
             categoria.getId(),
             categoria.getNombre(),
             categoria.getImagen(),
             pictosDTO,
             usuarioId
         );
+        dto.setTraducciones(categoria.getTraducciones());
+        return dto;
     }
 
     public List<Pictograma> obtenerPictogramasCategoriaParaUsuario(Long categoriaId, Long usuarioId) {

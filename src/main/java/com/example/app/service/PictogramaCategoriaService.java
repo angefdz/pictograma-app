@@ -34,7 +34,7 @@ public class PictogramaCategoriaService {
 
         Categoria categoria = categoriaRepository.findById(categoriaId)
             .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
-
+ 
         PictogramaCategoria relacion = new PictogramaCategoria();
         relacion.setPictograma(pictograma);
         relacion.setCategoria(categoria);

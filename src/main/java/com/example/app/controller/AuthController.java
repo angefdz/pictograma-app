@@ -70,16 +70,12 @@ public class AuthController {
                 loginData.getContrasena()
         );
 
-        Optional<Usuario> usuarioOpt = authService.buscarPorEmail(loginData.getEmail());
-
-        if (usuarioOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Usuario no encontrado"));
-        }
         if (!autenticado) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Credenciales inválidas"));
         }
+
+        Optional<Usuario> usuarioOpt = authService.buscarPorEmail(loginData.getEmail());
 
         String token = jwtUtil.generateToken(loginData.getEmail());
 
@@ -93,28 +89,6 @@ public class AuthController {
         ));
     }
 
-    @PostMapping("/google")
-    public ResponseEntity<Map<String, Object>> loginGoogle(@RequestBody Usuario usuarioGoogle) {
-
-        Optional<Usuario> usuarioOpt = authService.buscarPorEmail(usuarioGoogle.getEmail());
-
-        Usuario usuario;
-
-        if (usuarioOpt.isEmpty()) {
-            usuario = authService.registrarUsuarioGoogle(usuarioGoogle);
-        } else {
-            usuario = usuarioOpt.get();
-        }
-
-        String token = jwtUtil.generateToken(usuario.getEmail());
-
-        return ResponseEntity.ok(Map.of(
-                "token", token,
-                "usuarioId", usuario.getId()
-        ));
-    }
-
-    
     @PutMapping("/cambiar-contrasena")
     public ResponseEntity<String> cambiarContrasena(@RequestBody Map<String, String> body) {
         try {
@@ -125,6 +99,10 @@ public class AuthController {
 
             if (contrasenaActual == null || nuevaContrasena == null) {
                 return ResponseEntity.badRequest().body("Faltan datos obligatorios");
+            }
+
+            if (!authService.esContrasenaSegura(nuevaContrasena)) {
+                return ResponseEntity.badRequest().body("La nueva contraseña no es segura");
             }
 
             boolean cambiada = authService.cambiarContrasena(email, contrasenaActual, nuevaContrasena);

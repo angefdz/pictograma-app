@@ -1,4 +1,5 @@
 package com.example.app.dto;
+import java.util.Map;
 
 public class PictogramaSimple {
 
@@ -6,6 +7,7 @@ public class PictogramaSimple {
     private String nombre;
     private String imagen;
     private String tipo; 
+    private Map<String, String> traducciones;
 
     public PictogramaSimple() {}
 
@@ -25,4 +27,6 @@ public class PictogramaSimple {
     public void setNombre(String nombre) { this.nombre = nombre; }
     public void setImagen(String imagen) { this.imagen = imagen; }
     public void setTipo(String tipo) { this.tipo = tipo; }
+    public Map<String, String> getTraducciones() { return traducciones; }
+    public void setTraducciones(Map<String, String> traducciones) { this.traducciones = traducciones; }
 }

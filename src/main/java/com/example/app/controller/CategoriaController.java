@@ -30,7 +30,7 @@ import com.example.app.service.UsuarioService;
 @RequestMapping("/categorias")
 public class CategoriaController {
 
-    @Autowired
+    @Autowired 
     private CategoriaService categoriaService;
 
     @Autowired
@@ -52,8 +52,7 @@ public class CategoriaController {
         if (input == null || input.getNombre() == null || input.getNombre().isBlank()) {
             return ResponseEntity.badRequest().build();
         }
-        CategoriaConPictogramas nueva = categoriaService.crearDesdeInput(input); 
-        return new ResponseEntity<>(nueva, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
 

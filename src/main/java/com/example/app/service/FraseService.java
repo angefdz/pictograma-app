@@ -24,7 +24,7 @@ public class FraseService {
 		System.out.println("la fras es: "+frase.getTexto());
 		System.out.println("El usuario es: "+usuario.getNombre());
 		return fraseRepository.save(frase);
-	}
+	} 
 	
 	public List<Frase> obtenerFrasesByUsuario(Long usuarioId){
 		return fraseRepository.findByUsuarioId(usuarioId);

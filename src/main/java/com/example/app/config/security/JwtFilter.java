@@ -31,9 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String path = request.getServletPath();
 
-        if (path.equals("/auth/login") ||
-        	    path.equals("/auth/register") ||
-        	    path.equals("/categorias/general")) {
+        if (path.equals("/auth/login") || path.equals("/auth/register")) {
         	    filterChain.doFilter(request, response);
         	    return;
         	}
@@ -44,7 +42,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            String email = jwtUtil.extractEmail(token);
+            String email;
+            try {
+                email = jwtUtil.extractEmail(token);
+            } catch (io.jsonwebtoken.JwtException | IllegalArgumentException exception) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -57,13 +61,8 @@ public class JwtFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                    System.out.println("Usuario autenticado correctamente: " + usuario.getEmail());
-                } else {
-                    System.out.println(" Token inválido o usuario no encontrado");
                 }
             }
-        } else {
-            System.out.println("No se encontró cabecera Authorization válida");
         }
 
         filterChain.doFilter(request, response);

@@ -1,4 +1,5 @@
 package com.example.app.dto;
+import java.util.Map;
 
 public class CategoriaSimple {
 
@@ -6,6 +7,7 @@ public class CategoriaSimple {
     private String nombre;
     private String imagen;
     private Long usuarioId;
+    private Map<String, String> traducciones;
 
     public CategoriaSimple() {}
 
@@ -47,4 +49,6 @@ public class CategoriaSimple {
     public void setUsuarioId(Long usuarioId) {
         this.usuarioId = usuarioId;
     }
+    public Map<String, String> getTraducciones() { return traducciones; }
+    public void setTraducciones(Map<String, String> traducciones) { this.traducciones = traducciones; }
 }

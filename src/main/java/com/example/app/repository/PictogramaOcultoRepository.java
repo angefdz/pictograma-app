@@ -20,7 +20,7 @@ public interface PictogramaOcultoRepository extends JpaRepository<PictogramaOcul
 
     @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM PictogramaOculto p WHERE p.usuario.id = :usuarioId AND p.pictograma.id = :pictogramaId")
     boolean existsByUsuarioIdAndPictogramaId(@Param("usuarioId") Long usuarioId, @Param("pictogramaId") Long pictogramaId);
-
+ 
     @Transactional
     @Modifying
     @Query("DELETE FROM PictogramaOculto p WHERE p.usuario.id = :usuarioId AND p.pictograma.id = :pictogramaId")

@@ -1,6 +1,7 @@
 package com.example.app.dto;
 
 import java.util.List;
+import java.util.Map;
 
 public class PictogramaConCategorias {
     private Long id;
@@ -9,6 +10,7 @@ public class PictogramaConCategorias {
     private String tipo;
     private Long usuarioId; 
     private List<CategoriaSimple> categorias;
+    private Map<String, String> traducciones;
 
     public PictogramaConCategorias() {}
 
@@ -34,4 +36,6 @@ public class PictogramaConCategorias {
     public void setTipo(String tipo) { this.tipo = tipo; }
     public void setUsuarioId(Long usuarioId) { this.usuarioId = usuarioId; }
     public void setCategorias(List<CategoriaSimple> categorias) { this.categorias = categorias; }
+    public Map<String, String> getTraducciones() { return traducciones; }
+    public void setTraducciones(Map<String, String> traducciones) { this.traducciones = traducciones; }
 }

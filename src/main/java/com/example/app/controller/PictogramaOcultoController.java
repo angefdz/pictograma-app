@@ -34,7 +34,7 @@ public class PictogramaOcultoController {
 
         if (principal instanceof Usuario usuario) {
             return usuario.getEmail();
-        }
+        } 
 
         return principal.toString();
     }
@@ -65,7 +65,9 @@ public class PictogramaOcultoController {
 
     
     @GetMapping("/es-oculto")
-    public ResponseEntity<Boolean> estaOculto(@RequestParam Long pictogramaId, @RequestParam Long usuarioId) {
+    public ResponseEntity<Boolean> estaOculto(@RequestParam Long pictogramaId) {
+        String correo = getCorreoAutenticado();
+        Long usuarioId = usuarioService.obtenerId(correo);
         boolean resultado = pictogramaOcultoService.estaOculto(pictogramaId, usuarioId);
         return ResponseEntity.ok(resultado);
     }

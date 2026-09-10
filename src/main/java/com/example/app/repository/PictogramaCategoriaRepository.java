@@ -66,7 +66,7 @@ public interface PictogramaCategoriaRepository extends JpaRepository<PictogramaC
         @Param("pictogramaId") Long pictogramaId,
         @Param("categoriaId") Long categoriaId,
         @Param("usuarioId") Long usuarioId
-    );
+    ); 
     
     @Query("SELECT pc FROM PictogramaCategoria pc WHERE pc.usuario IS NULL")
     List<PictogramaCategoria> findAllGenerales();

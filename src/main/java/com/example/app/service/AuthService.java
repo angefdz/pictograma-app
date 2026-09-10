@@ -32,7 +32,7 @@ public class AuthService {
     @Autowired
     private ConfiguracionRepository configuracionRepository; 
     
-    private boolean esContrasenaSegura(String contrasena) {
+    public boolean esContrasenaSegura(String contrasena) {
         if (contrasena == null) return false;
 
        return contrasena.length() >= 8 &&
@@ -47,7 +47,8 @@ public class AuthService {
             return false; 
         }
         if (!esContrasenaSegura(usuario.getContrasena())) {
-            throw new IllegalArgumentException("La contraseña no es segura. Debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula, un número y un carácter especial.");
+            throw new IllegalArgumentException("La contraseña no es segura. Debe tener al menos 8 caracteres, incluir una mayúscula, "
+            		+ "una minúscula, un número y un carácter especial.");
         }
 
         String contrasenaEncriptada = passwordEncoder.encode(usuario.getContrasena());
@@ -120,7 +121,7 @@ public class AuthService {
             relacion.setUsuario(usuario);
             nuevasRelaciones.add(relacion);
         }
-
+ 
         pictogramaCategoriaRepository.saveAll(nuevasRelaciones);
     }
 
